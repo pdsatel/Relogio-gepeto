@@ -1,0 +1,61 @@
+#include <LiquidCrystal.h>
+
+#define RS 7
+#define E 6
+#define DB4 5
+#define DB5 4
+#define DB6 3
+#define DB7 2
+
+LiquidCrystal tela(RS, E, DB4, DB5, DB6, DB7);
+
+int sec = 0;
+int minut = 0;
+int hour = 0;
+
+unsigned long previousMillis = 0;  // Armazena o tempo do último update
+const long interval = 1000;  // Intervalo de 1 segundo (1000 milissegundos)
+
+void setup() {
+  tela.begin(16, 2);
+  updateDisplay();  // Mostra o tempo inicial
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+
+  // Verifica se 1 segundo passou
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;  // Salva o tempo atual
+
+    sec += 1;
+    if (sec >= 60) {
+      sec = 0;
+      minut += 1;
+
+      if (minut >= 60) {
+        minut = 0;
+        hour += 1;
+
+        if (hour >= 24) {
+          hour = 0;
+        }
+      }
+    }
+    updateDisplay();
+  }
+}
+
+void updateDisplay() {
+  tela.clear();
+  tela.setCursor(0, 0);
+  tela.print("Hora:");
+  tela.setCursor(0, 1);
+  tela.print(hour);
+  tela.print(":");
+  if (minut < 10) tela.print("0"); 
+  tela.print(minut);
+  tela.print(":");
+  if (sec < 10) tela.print("0"); 
+  tela.print(sec);
+}
